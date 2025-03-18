@@ -8,6 +8,7 @@ const runSDK = ({
   assistantOverrides,
   squad,
   config = {},
+  createButton = false,
   ...restOptions 
 }) => {
   function deepMerge(defaultConfig, userConfig) {
@@ -59,13 +60,14 @@ const runSDK = ({
   const buttonConfig = deepMerge(defaultConfig, config);
   if (apiKey && (assistant || squad)) {
     const vapi = new Vapi(apiKey);
-    const buttonElement = createButtonElement(buttonConfig);
-
-    const buttonStateHandler = createButtonStateHandler(buttonConfig);
-    document.body.appendChild(buttonElement);
-
-    buttonStateHandler(buttonElement, "idle");
-    defaultListeners(vapi, buttonElement, assistant, assistantOverrides, squad, buttonStateHandler);
+    
+    if (createButton) {
+      const buttonElement = createButtonElement(buttonConfig);
+      const buttonStateHandler = createButtonStateHandler(buttonConfig);
+      document.body.appendChild(buttonElement);
+      buttonStateHandler(buttonElement, "idle");
+      defaultListeners(vapi, buttonElement, assistant, assistantOverrides, squad, buttonStateHandler);
+    }
 
     window.vapiSDK.vapi = vapi;
     return vapi;
